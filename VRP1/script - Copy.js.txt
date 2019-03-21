@@ -1,0 +1,53 @@
+var canvas = document.getElementById("viewPort");
+var addVertexBtn = document.getElementById("addVertex");
+var xValue = document.getElementById("xAxis");
+var yValue = document.getElementById("yAxis");
+
+var vertexTopArr = [];
+var vertexLeftArr = [];
+
+addVertexBtn.onclick = function () {
+    var top;
+    var left;
+    // use for default value
+    if(!(parseInt($("input#xAxis").val()) && parseInt($("input#yAxis").val()))){
+        if(!parseInt($("input#xAxis").val()))
+            top = randomInt(0, 600);
+        if(!parseInt($("input#yAxis").val()))
+            left = randomInt(0, 800);
+    }
+    if(!top){
+        top = parseInt($("input#xAxis").val());
+    }
+    if(!left){
+        left = parseInt($("input#yAxis").val());
+    }
+    // alert(top);
+
+    var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(left, top, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = "black";
+    ctx.fill();
+    ctx.closePath();
+    // alert("why");
+    var length = vertexLeftArr.length;
+    if(length) {
+        alert("Ehy");
+        ctx.moveTo(vertexLeftArr[length - 1], vertexTopArr[length - 1]);
+        ctx.lineTo(left, top);
+        ctx.stroke();
+    }
+    vertexLeftArr.push(left);
+    vertexTopArr.push(top);
+    // ExpTbl();
+    // Over();
+};
+
+
+
+
+
+function randomInt(min, max) {
+    return Math.random()*(max - min) + min;
+}

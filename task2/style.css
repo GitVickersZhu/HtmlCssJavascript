@@ -1,0 +1,42 @@
+﻿html, body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    vertical-align: central;
+}
+
+input {
+    display: inline;
+    margin: 4px 5px 0px 5px;
+}
+
+#viewPort {
+    width: 800px;
+    height: 600px;
+    background-color: whitesmoke;
+}
+
+#controlPanel {
+    width: auto;
+    margin: 0px auto;
+    display: table;
+}
+
+#fieldsetControl {
+    width: 220px;
+    display: block;
+    margin: 0px auto;
+}
+
+#fieldsetGraph {
+    width: auto;
+    display: inline-block;
+}
+#addVertex{
+
+}
+#refreshGraph{
+
+}

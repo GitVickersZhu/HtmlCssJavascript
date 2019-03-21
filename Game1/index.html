@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+<div id="MainBg">
+
+    <div id="Title1">
+        <div id="Head">
+            <h1><strong>Touhou</strong></h1><br>
+            <h1><strong>Project</strong></h1>
+        </div>
+        <img id="BeginImg" src="https://images.alphacoders.com/660/660473.jpg" alt="Start Image here of Touhou Project">
+        <div id="BtnDiv"><button id="StartBtn">Start Game!</button></div>
+    </div>
+</div>
+
+
+
+</body>
+<script src="touhou2.js" type="text/javascript" charset="utf-8"></script>
+<script src="bullet.js" type="text/javascript" charset="uff-8"></script>
+<script src="baseObj.js" type="text/javascript" charset="utf-8"></script>
+<script src="enemy.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var BeginImage = document.getElementById("BeginImg");
+    var Head = document.getElementById("Head");
+    var MainBg = document.getElementById("MainBg");
+    var JsStartBtn = document.getElementById("StartBtn");
+    var bulletArr = [];
+    var enemyArr = [];
+    window.setInterval(function () {
+        baseObj.RunBullet(bulletArr)
+    }, 40);
+    window.setInterval(function () {
+        baseObj.RunEnemy(enemyArr)
+    }, 40);
+    window.setInterval(function () {
+        CreateEnemy(enemyArr);
+    },3000);
+    window.setInterval(function () {
+        baseObj.IfBullet(bulletArr, MainBg)
+    }, 40);
+    window.setInterval(function () {
+        baseObj.IfEnemy(enemyArr, MainBg)
+    }, 40);
+    window.setInterval(function () {
+        baseObj.IfCrash(bulletArr, enemyArr, MainBg)
+    }, 40);
+
+
+
+    JsStartBtn.onclick = function () {
+        BeginImage.style.display = "none";
+        Head.style.display = "none";
+        JsStartBtn.style.display = "none";
+        role.ShowRemoi(MainBg);
+        document.onkeydown = role.MoveRemoi;
+        document.onmousedown = function () {
+
+            var b = new Bullet("absolute", role.div.offsetLeft, role.div.offsetTop);
+            bulletArr.push(b);
+            b.createBullet();
+            role.ChangeBgImg(1);
+        };
+        document.onmouseup = function () {
+            role.ChangeBgImg(0)
+        };
+
+    };
+</script>
+</html>

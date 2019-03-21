@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    		<script type="text/javascript" src="http://ditu.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyAQWZaINBDFaNh5rRfF6hct9_ObqdVGm2o&hl=zh-CN"></script>
+    		<script type="text/javascript">
+    		    var map;//GMap2的核心对象
+    		    var geocoder = null;//用来解析的
+    		    var markers = new Array();//用来存放GMarker
+
+    		    function showLocation() {
+    		        map.clearOverlays();
+    		        document.getElementById('divOutput').innerHTML = "搜索中...";
+    		        var address = document.getElementById('txtAddress').value;
+    		        geocoder.getLocations(address, cb_showLocation);//搜索的核心方法
+    		    }
+    		    //回调事件，主要在界面上描点和右侧产生列表信息
+    		    function cb_showLocation(result) {
+    		        // 显示结果
+    		        if (result.Status.code == G_GEO_SUCCESS)
+    		        {
+    		            document.getElementById("divOutput").innerHTML = "成功(" + result.Placemark.length + ")<br />";
+    		            var icon = new GIcon(G_DEFAULT_ICON);
+    		            var lat, lng, point, address, marker;
+    		            for (var i = 0; i < result.Placemark.length; i++) {
+    		                lat = result.Placemark[i].Point.coordinates[1]; // lat
+    		                lng = result.Placemark[i].Point.coordinates[0]; // lng
+    		                address = result.Placemark[i].address; // 地址
+    		                point = new GLatLng(lat, lng);
+
+    		                //marker = new GMarker(point, { title: i + 1 }); ;
+    		                //map.addOverlay(marker);
+    		                //(address+" <a href=javascript:go("+lat+","+lng+")>go</a><br />" );
+    		                document.getElementById("divOutput").innerHTML += ((i + 1) + " " + address + " <small>" + point.toString() + "</small><br />");
+    		                createMarker(icon, point, address, i);
+    		            }
+    		        }
+    		        else {
+    		            document.getElementById("divOutput").innerHTML = result.Status.code;
+    		        }
+    		    }
+    		    //在地图上描点
+    		    function createMarker(icon, point, html, index) {
+    		        var letter = String.fromCharCode("A".charCodeAt(0) + index);
+    		        icon.image = "http://ditu.google.com/mapfiles/marker" + letter + ".png";
+    		        var marker = new GMarker(point, icon);
+    		        GEvent.addListener(marker, "click", function() {
+    		            marker.openInfoWindowHtml(html);
+    		        });
+    		        markers.push(marker);
+    		        map.addOverlay(marker);
+    		    }
+    		    function init() {
+    		        //检查浏览器的兼容性.
+    		        if (GBrowserIsCompatible()) {
+    		            map = new GMap2(document.getElementById("map_canvas"));
+    		            //设置地图的中心坐标.
+    		            var loc = new GLatLng(39.990168, 116.295304);
+    		            map.setCenter(loc, 5);
+    		            //创建带有可在四个方向平移、放大、缩小的按钮，以及缩放滑块的控件。
+    		            map.addControl(new GLargeMapControl());
+    		            //创建带有切换地图类型的按钮的控件。
+    		            map.addControl(new GMapTypeControl());
+    		            //设置地图支持滚轮
+    		            map.enableScrollWheelZoom();
+    		            //实例化一个地址解析
+    		            geocoder = new GClientGeocoder();
+    		        }
+    		    }
+    		    window.onload = init;
+    		    window.onunload = GUnload;
+    </script>
+</head>
+<body>
+		<!-- 地图画板 -->
+		<input type="text" id="txtAddress" name="txtAddress" size="40" /><input type="button" value="查询" onclick="showLocation();" />
+		<div id="map_canvas" style="width: 600px; height: 500px ;float:left;"></div>
+		<div id="divOutput" style="float:left;" ></div>
+</body>
+</html>

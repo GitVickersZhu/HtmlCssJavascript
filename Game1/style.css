@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Charmonman');
+
+#Title1{
+    text-align: center;
+    font-family: Charmonman, cursive;
+    top: 20%;
+}
+
+#BeginImg{
+    width: 100%;
+    height: 100%;
+}
+#Head{
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: xx-large;
+}
+#BtnDiv{
+    width: 100%;
+    position: absolute;
+    bottom: 20%;
+}
+#StartBtn{
+    font-size: xx-large;
+    padding: 0.5em;
+    horiz-align: center;
+}
+#MainBg{
+    width: 100%;
+    height: 100%;
+}

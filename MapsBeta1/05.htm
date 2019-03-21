@@ -1,0 +1,182 @@
+﻿<html>
+	<head>
+	
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="style.css"></link>
+		<title></title>
+		<script	type="text/javascript" src="http://ditu.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA&hl=zh-CN"></script>
+		<script type="text/javascript" src="http://www.google.com/uds/api?file=uds.js&v=1.0&key=ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA&hl=zh-CN"></script>
+		<script type="text/javascript" src="http://www.google.com/uds/solutions/localsearch/gmlocalsearch.js"></script>
+		
+		<style type="text/css">
+		  @import url("http://www.google.com/uds/css/gsearch.css");
+		  @import url("http://www.google.com/uds/solutions/localsearch/gmlocalsearch.css");
+			#top ul li{
+			float:left;
+			padding:3px 8px;
+		
+			}
+			#top {
+			width:100%;
+			border-bottom:1px #666 solid;
+			clear:both;
+			height:20px;
+			}
+		      #addHotelMap {
+		        border : 1px solid #979797;
+		        width :79%;
+		        height : 500px;
+		        float:left;
+		      }
+		       #searchResult {
+		        border : 1px solid #979797;
+		        width : 18%;
+		        height : 500px;
+		        float:left;
+		        overflow:scroll;
+		        padding:5px;
+		      }
+			  #searchResult div{
+		        padding:5px 0;
+				color:#333;
+		      }
+		      ul,li{
+				margin:0;
+				padding:0;
+				list-style:none;
+			  }
+			  body{
+			  color:#999;
+			  font-size:12px;
+			  height:98%;
+			  }
+			  h1{
+			color:#666;
+			  padding:0;
+			  margin:0;
+			  font-size:14px;
+			  line-height:22px;
+			  height:22px;
+			  }
+		     #schollContainer div.list{
+		         background:url("scholl.png") no-repeat left;
+		         padding-left:20px;
+		     }
+		</style>
+    
+		<script type="text/javascript">
+		    var map;
+		    var hasMarker = false;
+		    var markers = new Array();
+		    var KMapSearch = window.KMapSearch = function(map_, opts_) 
+		    {
+		        this.opts = { keyWord: opts_.keyWord || "", latlng: opts_.latlng || new GLatLng(31, 121), autoClear: opts_.autoClear || true, icon: opts_.icon || new GIcon(G_DEFAULT_ICON) };
+		        this.map = map_;
+		        this.gLocalSearch = new google.search.LocalSearch();
+		        this.gLocalSearch.setCenterPoint(this.opts.latlng);
+		        this.gLocalSearch.setResultSetSize(GSearch.LARGE_RESULTSET);
+		        this.gLocalSearch.setSearchCompleteCallback(this, myTips);
+		    }
+		    //请除所有查询结果
+		    KMapSearch.prototype.clearAll = function() {
+		        for (var i = 0; i < markers.length; i++) { this.map.removeOverlay(markers[i]); }
+		        markers.length = 0;
+		    }
+		    //开始查询
+		    KMapSearch.prototype.execute = function(latLng) {
+		        if (latLng) { this.gLocalSearch.setCenterPoint(latLng); }
+		        this.gLocalSearch.execute(this.opts.keyWord);
+		    }
+		    //取得查询结果，并以DIV的方式展示
+		    KMapSearch.prototype.getResult = function(result, i) {
+		        var container = document.createElement("div");
+		        container.className = "list";
+		        var myRadom = (new Date()).getTime().toString() + Math.floor(Math.random() * 10000);
+		        container.id = myRadom;
+		        container.innerHTML = i + "、" + result.title + "<br />地址：" + result.streetAddress;
+		        //this.createMarker(new GLatLng(result.lat, result.lng), result.html, myRadom);
+		        return container;
+		    }
+//载入
+function OnLoad() {
+    if (GBrowserIsCompatible()) {
+        map = new GMap2(document.getElementById("map_canvas"));
+        map.addControl(new GLargeMapControl());
+        map.addControl(new GMenuMapTypeControl());
+        map.addControl(new GOverviewMapControl());
+        map.enableScrollWheelZoom();
+        map.setCenter(new GLatLng(39.990168, 116.295304), 10);
+        //添加右键单击事件
+        GEvent.addListener(map, "singlerightclick", function(point) {
+            var initPt = map.fromContainerPixelToLatLng(point);
+            map.clearOverlays();
+            marker = new GMarker(initPt, { draggable: true });
+            if (hasMarker) {
+                marker.setLatLng(initPt);
+                map.panTo(initPt);
+            }
+            else {
+                //拖拽事件
+                GEvent.addListener(marker, "dragend", function() {
+                    initPt = marker.getLatLng();
+                    map.panTo(initPt);
+                    searchMap(initPt);
+                });
+                hasMarker = true;
+            }
+            map.addOverlay(marker);
+            searchMap(initPt);
+        });
+    }
+}
+//点击提示信息
+function myTips() {
+    var content = "";
+    var resultdiv = document.getElementById("map");
+    for (j = 0; j < markers.length; j++) {
+        map.removeOverlay(markers[j]);
+    }
+    markers.length = 0;
+    var results = this.gLocalSearch.results;
+    var icon = new GIcon(G_DEFAULT_ICON);
+    var savedResults = document.getElementById("schollContainer");
+    if (this.gLocalSearch.results) 
+    {
+        if (this.opts.autoClear) {
+            savedResults.innerHTML = "";
+        }
+        for (var i = 0; i < results.length; i++) {
+            content = '<p>' + '名称:' + results[i].title + '<br />' + '地址:' + results[i].streetAddress + '<br />' + '坐标:' + results[i].lat + ',' + results[i].lng + '</p>';
+            myCreateMarker(new GPoint(results[i].lng, results[i].lat), icon, content, i);
+            savedResults.appendChild(this.getResult(this.gLocalSearch.results[i], i + 1));
+        }
+    }
+}
+//地图上标注
+function myCreateMarker(point, icon, html, index) {
+    var letter = String.fromCharCode("A".charCodeAt(0) + index);
+    icon.image = "http://ditu.google.com/mapfiles/marker" + letter + ".png";
+    var marker = new GMarker(point, icon);
+    GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
+    markers.push(marker);
+    map.addOverlay(marker);
+}
+//在给定的坐标附近搜索指定的关键字
+function searchMap(initPt) {
+    var myIcon = new GIcon(G_DEFAULT_ICON);
+    var mapSearch = new KMapSearch(map, { latlng: initPt, icon: myIcon, keyWord: "驾校" });
+    mapSearch.clearAll();
+    mapSearch.execute();
+}
+		    window.onload = OnLoad;
+			window.onunload = GUnload;
+    </script>
+
+	</head>
+	<body>
+		<!-- 地图画板 -->	
+		<div id="map_canvas" style="width:640px; height:480px ;float:left;"></div>
+		<div style="width:4px; height:480px ;float:left;"></div>
+		<div id="searchResult">驾校：<div id="schollContainer"></div></div>
+	</body>
+</html>
